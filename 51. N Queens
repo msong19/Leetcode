@@ -1,0 +1,48 @@
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        board = []
+        for i in range(n):
+            board.append([0] * n)
+        answers = self.helper(board,0,0,n,[])
+        gang = []
+        curr = []
+        for answer in answers:
+            for interval in answer:
+                index = interval.index(1)
+                curr.append("." * index + "Q" + "." * (n-index-1))
+            gang.append(curr)
+            curr = []
+        return gang
+                
+    def helper(self,board,row,col,n,answers):
+        if row == n:
+            return True
+        for i in range(n):
+            val = False
+            if self.isValid(board,row,i,n):
+                board[row][i] = 1
+                val = self.helper(board,row+1,col,n,answers)
+                if val is False:
+                    board[row][i] = 0
+                else:
+                    if row == n-1:
+                        gang = copy.deepcopy(board)
+                        answers.append(gang)
+                    board[row][i] = 0
+        return answers
+    
+    def isValid(self,board,row,col,n):
+        if 1 in board[row]:
+            return False
+        for i in range(n):
+            if board[i][col] == 1:
+                return False
+            if 0<=row+i<n and 0<=col+i<n and board[row+i][col+i] == 1:
+                return False
+            if 0<=row+i<n and 0<=col-i<n and board[row+i][col-i] == 1:
+                return False
+            if 0<=row-i<n and 0<=col-i<n and board[row-i][col-i] == 1:
+                return False
+            if 0<=row-i<n and 0<=col+i<n and board[row-i][col+i] == 1:
+                return False
+        return True
